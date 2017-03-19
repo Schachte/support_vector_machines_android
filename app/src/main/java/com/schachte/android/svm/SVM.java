@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,13 +43,26 @@ public class SVM {
             e.printStackTrace();
         }
 
-        double[][] test_data = new double[1][3];
+        double[][] test_data = new double[1][6];
         test_data[0][0] = activitySum[0];
         test_data[0][1] = activitySum[1];
         test_data[0][2] = activitySum[2];
+        test_data[0][3] = activitySum[3];
+        test_data[0][4] = activitySum[4];
+        test_data[0][5] = activitySum[5];
+
 
         double[] ypred = svmPredict(test_data, trainedModel);
         TextView tv1 = (TextView)mainAct.findViewById(R.id.activity_type);
+
+        Toast.makeText(mainAct, Double.toString(test_data[0][0]) +
+                " " + Double.toString(test_data[0][1]) +
+                " " + Double.toString(test_data[0][2]) +
+                " " + Double.toString(test_data[0][3]) +
+                " " + Double.toString(test_data[0][4]) +
+                " " + Double.toString(test_data[0][5]) +
+
+                " " , Toast.LENGTH_LONG).show();
 
         switch(String.valueOf(ypred[0])) {
             case "0.0":
