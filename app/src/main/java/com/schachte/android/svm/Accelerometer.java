@@ -19,8 +19,6 @@ import static android.content.Context.SENSOR_SERVICE;
 public class Accelerometer implements SensorEventListener {
 
     private static final String TAG = "MainActivity";
-
-    static int ACCE_FILTER_DATA_MIN_TIME = 0; // 3000ms
     private int totalRecords;
     public float x,y,z;
 
@@ -40,7 +38,6 @@ public class Accelerometer implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-//        if ((System.currentTimeMillis() - lastSaved) > ACCE_FILTER_DATA_MIN_TIME) {
             lastSaved = System.currentTimeMillis();
             totalRecords+=1;
 
@@ -48,11 +45,11 @@ public class Accelerometer implements SensorEventListener {
             y+=event.values[1];
             z+=event.values[2];
 
-            if (totalRecords == 50) {
+            if (totalRecords == 150) {
                 Toast.makeText(mainAct, "Completed all 150 records" , Toast.LENGTH_LONG).show();
-                Toast.makeText(mainAct, Float.toString(x) + " " + Float.toString(y) + " " + Float.toString(z), Toast.LENGTH_LONG).show();
 
                 float[] dataVals = new float[3];
+
                 dataVals[0] = x;
                 dataVals[1] = y;
                 dataVals[2] = z;
@@ -69,7 +66,6 @@ public class Accelerometer implements SensorEventListener {
             else {
                 et1.append("LOG: " + Integer.toString(totalRecords) + "\n");
             }
-//        }
     }
 
     public void registerSensorListener() {
@@ -80,7 +76,7 @@ public class Accelerometer implements SensorEventListener {
         phoneSensor = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         //Register the sensor listener
-        SM.registerListener(this, phoneSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        SM.registerListener(this, phoneSensor, 100000);
     }
 
     public void unregisterSensorListener() {

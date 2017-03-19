@@ -47,19 +47,8 @@ public class SVM {
         test_data[0][1] = activitySum[1];
         test_data[0][2] = activitySum[2];
 
-        for (double[] d : test_data) {
-            System.out.println("PRINTING DATA!!!");
-            Log.d(TAG, String.valueOf(d[0]));
-            Log.d(TAG, String.valueOf(d[1]));
-            Log.d(TAG, String.valueOf(d[2]));
-        }
-
         double[] ypred = svmPredict(test_data, trainedModel);
-
-        Log.d(TAG, String.valueOf(ypred[0]));
-
         TextView tv1 = (TextView)mainAct.findViewById(R.id.activity_type);
-
 
         switch(String.valueOf(ypred[0])) {
             case "0.0":
@@ -75,8 +64,6 @@ public class SVM {
                 tv1.setText("Unclear");
                 break;
         }
-
-        Log.d(TAG, "Completed!");
     }
 
     public static double[] svmPredict(double[][] xtest, svm_model model) {
