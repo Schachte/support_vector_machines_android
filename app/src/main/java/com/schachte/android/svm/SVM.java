@@ -23,92 +23,69 @@ import libsvm.svm_node;
 
 public class SVM {
 
-    Activity mainAct;
-    private static final String TAG = "MainActivity";
     public static svm_model trainedModel;
-    public float[] activitySum;
 
-    public SVM(Activity mainAct, float[] activitySum) {
+    public SVM(Activity mainAct) {
 
-        this.activitySum = activitySum;
+        if (trainedModel == null) {
+            try {
+                //Read the trained model from the text file
+                InputStream trainedModelFile = mainAct.getResources().openRawResource(R.raw.trained_model);
+                String modelData = convertStreamToString(trainedModelFile);
+                BufferedReader bufferedModel = new BufferedReader(new StringReader(modelData));
 
-        InputStream trainedModelFile = mainAct.getResources().openRawResource(R.raw.trained_model);
-        String modelData = convertStreamToString(trainedModelFile);
-        BufferedReader bufferedModel = new BufferedReader(new StringReader(modelData));
+                //Create the svm model object that will be used for predicting
+                //Load the trained model for classifying new data points
+                trainedModel = svm.svm_load_model(bufferedModel);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-        try {
-            //Load the trained model for classifying new data points
-            trainedModel = new svm().svm_load_model(bufferedModel);
-        } catch (IOException e) {
-            e.printStackTrace();
+    /*
+     * This method will take in a feature vector and return the String classification
+     * that is determined by the SVM model
+     */
+    public String svmPredict(double[] activityData) {
+
+        svm_node[] nodes = new svm_node[activityData.length];
+
+        for (int i = 0; i < activityData.length; i++) {
+            svm_node node = new svm_node();
+            node.index = i;
+            node.value = activityData[i];
+            nodes[i] = node;
         }
 
-        double[][] test_data = new double[1][6];
-        test_data[0][0] = activitySum[0];
-        test_data[0][1] = activitySum[1];
-        test_data[0][2] = activitySum[2];
-        test_data[0][3] = activitySum[3];
-        test_data[0][4] = activitySum[4];
-        test_data[0][5] = activitySum[5];
+        int totalClasses = 3;
+        int[] labels = new int[totalClasses];
+        svm.svm_get_labels(trainedModel, labels);
 
+        //Get the prediction from the machine
+        double[] prob_estimates = new double[totalClasses];
+        double prediction = svm.svm_predict_probability(trainedModel, nodes, prob_estimates);
 
-        double[] ypred = svmPredict(test_data, trainedModel);
-        TextView tv1 = (TextView)mainAct.findViewById(R.id.activity_type);
-
-        Toast.makeText(mainAct, Double.toString(test_data[0][0]) +
-                " " + Double.toString(test_data[0][1]) +
-                " " + Double.toString(test_data[0][2]) +
-                " " + Double.toString(test_data[0][3]) +
-                " " + Double.toString(test_data[0][4]) +
-                " " + Double.toString(test_data[0][5]) +
-
-                " " , Toast.LENGTH_LONG).show();
-
-        switch(String.valueOf(ypred[0])) {
+        //Decode the double classification to a string and return it
+        String classification;
+        switch( String.valueOf( prediction ) ) {
             case "0.0":
-                tv1.setText("Eating");
+                classification = "Eating";
                 break;
             case "1.0":
-                tv1.setText("Walking");
+                classification = "Walking";
                 break;
             case "2.0":
-                tv1.setText("Running");
+                classification = "Running";
                 break;
             default:
-                tv1.setText("Unclear");
+                classification = "Unclear";
                 break;
         }
+        return classification;
     }
 
-    public static double[] svmPredict(double[][] xtest, svm_model model) {
-
-        double[] yPred = new double[xtest.length];
-
-        for (int k = 0; k < xtest.length; k++) {
-            double[] fVector = xtest[k];
-
-            svm_node[] nodes = new svm_node[fVector.length];
-
-            for (int i = 0; i < fVector.length; i++) {
-                svm_node node = new svm_node();
-                node.index = i;
-                node.value = fVector[i];
-                nodes[i] = node;
-            }
-
-            int totalClasses = 3;
-            int[] labels = new int[totalClasses];
-            svm.svm_get_labels(model, labels);
-
-            double[] prob_estimates = new double[totalClasses];
-            yPred[k] = svm.svm_predict_probability(model, nodes, prob_estimates);
-        }
-
-        return yPred;
-
-    }
-
-    static String convertStreamToString(java.io.InputStream is) {
+    private static String convertStreamToString(java.io.InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }

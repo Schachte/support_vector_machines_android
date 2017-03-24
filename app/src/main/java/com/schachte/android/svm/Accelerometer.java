@@ -12,6 +12,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.lang.Math;;
 
@@ -44,12 +45,16 @@ public class Accelerometer implements SensorEventListener {
     Activity mainAct;
     SVM supportVectorClassification;
     EditText et1;
+    TextView activityLabel;
 
     public Accelerometer(Activity mainAct) {
 
         //Reference to the main activity
         this.mainAct = mainAct;
         et1 = (EditText) this.mainAct.findViewById(R.id.log_data);
+        activityLabel = (TextView)mainAct.findViewById(R.id.activity_type);
+        supportVectorClassification = new SVM(mainAct);
+
     }
 
     @Override
@@ -78,9 +83,8 @@ public class Accelerometer implements SensorEventListener {
 
             int recordCount = 50;
             if (totalRecords == recordCount) {
-                Toast.makeText(mainAct, "Completed all  " + Integer.toString(recordCount), Toast.LENGTH_LONG).show();
 
-                float[] dataVals = new float[6];
+                double[] dataVals = new double[6];
 
                 dataVals[0] = 10 * (max_x - min_x);
                 dataVals[1] = 10 * (max_y - min_y);
@@ -89,7 +93,7 @@ public class Accelerometer implements SensorEventListener {
                 dataVals[4] = (y_sum/recordCount);
                 dataVals[5] = (z_sum/recordCount);
 
-                supportVectorClassification = new SVM(mainAct, dataVals);
+                activityLabel.setText( supportVectorClassification.svmPredict( dataVals ) );
 
                 unregisterSensorListener();
                 totalRecords = 0;
