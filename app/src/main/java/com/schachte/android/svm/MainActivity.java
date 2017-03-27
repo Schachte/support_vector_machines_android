@@ -43,6 +43,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Button accuracyResults = (Button) findViewById(R.id.accuracy_resultsBtn);
+        accuracyResults.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AccuracyResults.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /*

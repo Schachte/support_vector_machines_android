@@ -54,12 +54,21 @@
         android:layout_centerHorizontal="true" />
 
     <Button
+        android:id="@+id/accuracy_resultsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/log_data"
+        android:layout_alignStart="@+id/goto_comparison_graph"
+        android:layout_marginBottom="41dp"
+        android:text="Accuracy Results"/>
+
+    <Button
         android:id="@+id/goto_comparison_graph"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/log_data"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="98dp"
-        android:text="Comparison Graph" />
+        android:text="Comparison Graph"/>
 
 </RelativeLayout>
