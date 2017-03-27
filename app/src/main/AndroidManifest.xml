@@ -27,6 +27,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
             </activity>
+        <activity android:name=".AccuracyResults"
+                  android:parentActivityName=".MainActivity"
+                  android:screenOrientation="portrait"
+                  android:label="Accuracy Results">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
     </application>
 
 </manifest>
