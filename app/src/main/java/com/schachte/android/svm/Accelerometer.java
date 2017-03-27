@@ -14,6 +14,9 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
+
 import java.lang.Math;;
 
 import static android.content.Context.SENSOR_SERVICE;
@@ -44,14 +47,14 @@ public class Accelerometer implements SensorEventListener {
     long lastSaved = System.currentTimeMillis();
     Activity mainAct;
     SVM supportVectorClassification;
-    EditText et1;
+    TextView et1;
     TextView activityLabel;
 
     public Accelerometer(Activity mainAct) {
 
         //Reference to the main activity
         this.mainAct = mainAct;
-        et1 = (EditText) this.mainAct.findViewById(R.id.log_data);
+        et1 = (TextView) this.mainAct.findViewById(R.id.log_data);
         activityLabel = (TextView)mainAct.findViewById(R.id.activity_type);
         supportVectorClassification = new SVM(mainAct);
 
@@ -110,7 +113,7 @@ public class Accelerometer implements SensorEventListener {
                 y_sum = 0;
                 z_sum = 0;
             } else {
-                et1.setText("LOG: " + Integer.toString(totalRecords) + "\n");
+                et1.setText("LOG: Datapoint " + Integer.toString(totalRecords + 1) + "\n");
             }
         }
     }
