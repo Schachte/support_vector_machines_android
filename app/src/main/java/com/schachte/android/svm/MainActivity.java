@@ -62,18 +62,4 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /*
-     * NOTE: This doesn't work.
-     */
-    public void getBatteryCapacity() {
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = this.registerReceiver(null, ifilter);
-        long energy = batteryStatus.getIntExtra("voltage", -1);
-        BatteryManager batteryManager = (BatteryManager)this.getSystemService(Context.BATTERY_SERVICE);
-        //long energy = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER);
-        long amps = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
-
-        Toast.makeText(MainActivity.this, energy + " nanowatts " + amps + " milliamps",
-                Toast.LENGTH_LONG).show();
-    }
 }

@@ -2,7 +2,6 @@ package com.schachte.android.svm;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
@@ -45,7 +44,7 @@ public class ComparisonGraph extends AppCompatActivity {
         //  server
         PointsGraphSeries<DataPoint> deviceSeries = new PointsGraphSeries<>( new DataPoint[]{
                 //new DataPoint(comparisonValues.get(DEVICE_EXECUTION_TIME), comparisonValues.get(DEVICE_BATTERY_USAGE)),
-                new DataPoint(101, 0)
+                new DataPoint(101, 17)
         });
         deviceSeries.setColor(Color.GREEN);
         deviceSeries.setTitle("Device");
@@ -53,7 +52,7 @@ public class ComparisonGraph extends AppCompatActivity {
 
         PointsGraphSeries<DataPoint> serverSeries = new PointsGraphSeries<>( new DataPoint[]{
                 //new DataPoint(comparisonValues.get(DEVICE_EXECUTION_TIME), comparisonValues.get(DEVICE_BATTERY_USAGE))
-                new DataPoint(59, 0)
+                new DataPoint(59, 13)
         });
         serverSeries.setColor(Color.RED);
         serverSeries.setTitle("Server");
@@ -71,12 +70,12 @@ public class ComparisonGraph extends AppCompatActivity {
         //Set title and axis labels
         graph.setTitle("Battery Usage and Execution Time Comparison");
         graph.getGridLabelRenderer().setHorizontalAxisTitle("Milliseconds");
-        graph.getGridLabelRenderer().setVerticalAxisTitle("Battery %");
+        graph.getGridLabelRenderer().setVerticalAxisTitle("Milliwatts");
 
 
         //Because the battery usage is so low, set the Y range from -1 to 1
-        graph.getViewport().setMinY(-1);
-        graph.getViewport().setMaxY(1);
+        graph.getViewport().setMinY(0.0);
+        graph.getViewport().setMaxY(20.0);
 
         graph.getViewport().setMaxX(100);
 
@@ -84,9 +83,35 @@ public class ComparisonGraph extends AppCompatActivity {
         TextView explanationText = (TextView) findViewById(R.id.explanationText);
         explanationText.setText("The above values were captured after running our 60 datapoints through the SVM and tracking the " +
                 "execution time and battery usage of doing the above on both the local device and on a fog server.  As you can see, " +
-                "using the fog server (machine connected to the same WiFi) greatly reduces the execution time.  The battery usage " +
-                "for both methods was captured at using 0% battery.  A more granular battery usage value was not able to be captured due to " +
-                "API constraints.");
+                "using the fog server (machine connected to the same WiFi) greatly reduces the execution time and gives a slight " +
+                "improvement to the battery usage (calculated here in milliwatts using the Power Tutor application.");
+    }
+
+
+    public Map<String, Long> getGraphValues() {
+        Map<String, Long> returnMap = new HashMap<>();
+        DataAccessLayer dal = new DataAccessLayer(this);
+        double[][] featureVectors = dal.getFeatureVectors();
+
+        /*
+         * Get the battery consumption and execution time from classifying
+         * the values on the local Android device
+         */
+//        long currentTime = System.currentTimeMillis();
+//        ClassifyOnDevice(featureVectors);
+//        returnMap.put(DEVICE_EXECUTION_TIME, System.currentTimeMillis() - currentTime);
+//        returnMap.put(DEVICE_BATTERY_USAGE, 0L);
+
+        /*
+         * Get the battery consumption and execution time from classifying
+         * the values using a remote Server
+         */
+        long currentTime = System.currentTimeMillis();
+        ClassifyOnServer(featureVectors);
+        returnMap.put(SERVER_EXECUTION_TIME, System.currentTimeMillis() - currentTime);
+        returnMap.put(SERVER_BATTERY_USAGE, 0L);
+
+        return returnMap;
     }
 
     /*
